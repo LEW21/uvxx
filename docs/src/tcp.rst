@@ -98,9 +98,6 @@ API
 	.. note::
 		This method's signature may get changed in the future.
 
-	.. note::
-		Not yet implemented.
-
 .. cpp:function:: void uvxx::tcp::keepalive(bool enable, uint delay)
 
 	Enable / disable TCP keep-alive. `delay` is the initial delay in seconds,
@@ -108,9 +105,6 @@ API
 
 	.. note::
 		This method's signature may get changed in the future.
-
-	.. note::
-		Not yet implemented.
 
 .. cpp:function:: void uvxx::tcp::simultaneous_accepts(bool enable)
 
@@ -124,8 +118,5 @@ API
 
 	.. note::
 		This method's signature may get changed in the future.
-
-	.. note::
-		Not yet implemented.
 
 .. seealso:: The :cpp:class:`stream` API methods also apply.

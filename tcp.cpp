@@ -76,4 +76,19 @@ namespace uvxx
 		uv_tcp_getsockname(uv_tcp(), (sockaddr*) &a, &len);
 		return sockaddr_to_string(a);
 	}
+
+	void tcp::nodelay(bool enable)
+	{
+		uv_tcp_nodelay(uv_tcp(), enable);
+	}
+
+	void tcp::keepalive(bool enable, uint delay)
+	{
+		uv_tcp_keepalive(uv_tcp(), enable, delay);
+	}
+
+	void tcp::simultaneous_accepts(bool enable)
+	{
+		uv_tcp_simultaneous_accepts(uv_tcp(), enable);
+	}
 }

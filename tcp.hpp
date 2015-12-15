@@ -17,6 +17,10 @@ namespace uvxx
 		auto getsockname() -> std::string;
 		auto getpeername() -> std::string;
 
+		void nodelay(bool enable);
+		void keepalive(bool enable, uint delay);
+		void simultaneous_accepts(bool enable);
+
 	private:
 		// I don't think it's usable in the standard situations,
 		// as std::function requires lambda copyability,

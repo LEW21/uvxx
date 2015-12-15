@@ -36,9 +36,6 @@ API
 
 	Default-constructed, closed and moved-from handles are empty.
 
-	.. note::
-		Not yet implemented.
-
 .. cpp:function:: bool uvxx::handle::is_active() const
 
 	Returns true if the handle is active, false if it's inactive (or empty). What
@@ -57,9 +54,6 @@ API
 	Rule of thumb: if a handle of type :cpp:class:`uvxx::foo` has a :cpp:func:`uvxx::foo::start()`
 	function, then it's active from the moment that function is called.
 	Likewise, :cpp:func:`uvxx::foo::stop()` deactivates the handle again.
-
-	.. note::
-		Not yet implemented.
 
 .. cpp:function:: void uvxx::handle::close(xx::task&)
 

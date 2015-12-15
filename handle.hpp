@@ -24,6 +24,9 @@ namespace uvxx
 	public:
 		auto uv_handle() {return m_uv.get();}
 
+		operator bool() const { return m_uv.get(); }
+
+		bool is_active() const;
 		void close(xx::task& task);
 	};
 }

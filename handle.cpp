@@ -11,6 +11,11 @@ namespace uvxx
 		uv_close(handle, (uv_close_cb) std::free);
 	}
 
+	bool handle::is_active() const
+	{
+		return uv_is_active(m_uv.get());
+	}
+
 	void handle::close(xx::task& task)
 	{
 		auto handle = uv_handle();
