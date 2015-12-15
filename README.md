@@ -1,5 +1,7 @@
 # uvxx
-Coroutine-based C++ bindings for libuv.
+[![Documentation Status](https://readthedocs.org/projects/uvxx/badge/?version=latest)](http://uvxx.readthedocs.org/en/latest/?badge=latest)
+
+uvxx is a coroutine-based multi-platform C++ networking library that uses [yieldxx](http://github.com/LEW21/yieldxx) to provide a high-level synchronous API on top of the [libuv](http://github.com/libuv/libuv) event loop.
 
 ```c++
 #include "yieldxx/task.hpp"
@@ -31,6 +33,8 @@ int main()
 	return uv_run(loop, UV_RUN_DEFAULT);
 }
 ```
+
+[Read the docs!](http://uvxx.readthedocs.org/en/latest/)
 
 ## Usage
 ```sh
