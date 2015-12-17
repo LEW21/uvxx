@@ -7,7 +7,7 @@ namespace uvxx
 {
 	tcp::tcp(uv_loop_t* loop)
 	{
-		alloc<uv_loop_t>();
+		alloc<uv_tcp_t>();
 		uv_tcp_init(loop, uv_tcp());
 	}
 
