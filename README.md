@@ -8,11 +8,9 @@ uvxx is a coroutine-based multi-platform C++ networking library that uses [yield
 #include "uvxx/tcp.hpp"
 #include <uv.h>
 
-void handle_connection(uvxx::tcp& server)
+void handle_connection(uvxx::tcp&& client)
 {
-	xx::spawn_task([&](xx::task&& task){
-		auto client = server.accept();
-
+	xx::spawn_task([client = std::move(client)](xx::task&& task) mutable {
 		for (auto res : client.read(task))
 			client.write(res); // echo!
 	});
@@ -26,8 +24,8 @@ int main()
 	server.bind("::", 7000);
 
 	xx::spawn_task([&](xx::task&& task){
-		for (auto client_connected : server.listen(task, 128))
-			handle_connection(server);
+		for (auto& client : server.listen(task, 128))
+			handle_connection(std::move(client));
 	});
 
 	return uv_run(loop, UV_RUN_DEFAULT);
