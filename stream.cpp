@@ -17,46 +17,6 @@ namespace uvxx
 		return uv_is_writable(uv_stream());
 	}
 
-	auto stream::listen(xx::task& task, int backlog) -> xx::generated<client_connected>
-	{
-		auto stream = uv_stream();
-
-		return xx::generated<client_connected>([&, stream, backlog](typename xx::generator<client_connected>::yield&& yield)
-		{
-			int status;
-
-			auto cb = std::function<void (uv_stream_t*, int)>
-			{[&](uv_stream_t*, int s){
-				status = s;
-				task.resume();
-			}};
-			stream->data = &cb;
-
-			uv_listen((uv_stream_t*) stream, backlog, run_callback<uv_stream_t*, int>);
-
-			// Stop with coroutine::stop exception.
-			try
-			{
-				while (true)
-				{
-					task.yield();
-					if (status < 0)
-						break;
-					yield({});
-				}
-			}
-			catch (xx::coroutine::stop&) {}
-
-			// Unfortunately BSD sockets (and therefore libuv) don't support unlistening.
-			// However, we won't crash, run_callback will simply do nothing.
-
-			stream->data = 0;
-
-			if (status < 0)
-				throw error{status};
-		});
-	}
-
 	void alloc_buffer(uv_handle_t *handle, size_t suggested_size, uv_buf_t *buf) {
 		buf->base = new char[suggested_size];
 		buf->len = suggested_size;
@@ -64,9 +24,7 @@ namespace uvxx
 
 	auto stream::read(xx::task& task) -> xx::generated<std::string>
 	{
-		auto stream = uv_stream();
-
-		return xx::generated<std::string>([&, stream](typename xx::generator<std::string>::yield&& yield)
+		return xx::generated<std::string>([&, stream = uv_stream()](typename xx::generator<std::string>::yield&& yield)
 		{
 			struct
 			{

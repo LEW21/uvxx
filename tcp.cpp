@@ -1,6 +1,8 @@
 #include "tcp.hpp"
 
 #include <uv.h>
+#include "../yieldxx/task.hpp"
+#include "private/run_callback.hpp"
 #include "private/alloc.hpp"
 
 namespace uvxx
@@ -11,25 +13,43 @@ namespace uvxx
 		uv_tcp_init(loop, uv_tcp());
 	}
 
-	auto tcp::accept() -> tcp
+	auto tcp::listen(xx::task& task, int backlog) -> xx::generated<tcp>
 	{
-		auto client = tcp{uv_stream()->loop};
-		uv_accept(uv_stream(), client.uv_stream());
-		return client;
-	}
-
-	auto tcp::listen_and_accept(xx::task& task, int backlog) -> xx::generated<tcp>
-	{
-		auto stream = uv_stream();
-		auto listener_func = listen(task, backlog).gen;
-
-		return xx::generated<tcp>([stream, listener_func](xx::generator<tcp>::yield&& yield)
+		return xx::generated<tcp>([this, &task, backlog, stream = uv_stream()](xx::generator<tcp>::yield&& yield)
 		{
-			listener_func([&](client_connected connected){
-				auto client = tcp{stream->loop};
-				uv_accept(stream, client.uv_stream());
-				yield(std::move(client));
-			});
+			int status;
+
+			auto cb = std::function<void (uv_stream_t*, int)>
+			{[&](uv_stream_t*, int s){
+				status = s;
+				task.resume();
+			}};
+			stream->data = &cb;
+
+			uv_listen((uv_stream_t*) stream, backlog, run_callback<uv_stream_t*, int>);
+
+			// Stop with coroutine::stop exception.
+			try
+			{
+				while (true)
+				{
+					task.yield();
+					if (status < 0)
+						break;
+					auto client = tcp{stream->loop};
+					uv_accept(stream, client.uv_stream());
+					yield(std::move(client));
+				}
+			}
+			catch (xx::coroutine::stop&) {}
+
+			// Unfortunately BSD sockets (and therefore libuv) don't support unlistening.
+			// However, we won't crash, run_callback will simply do nothing.
+
+			stream->data = 0;
+
+			if (status < 0)
+				throw error{status};
 		});
 	}
 

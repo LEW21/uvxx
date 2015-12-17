@@ -16,10 +16,6 @@ Data types
 
 	Stream handle type.
 
-.. cpp:class:: uvxx::stream::client_connected
-
-	Empty class, yielded from the listen() generator.
-
 
 Wrapped libuv structure
 -----------------------
@@ -33,16 +29,6 @@ Wrapped libuv structure
 
 API
 ---
-
-.. cpp:function:: xx::generated<uvxx::stream::client_connected> uvxx::stream::listen(xx::task&, int backlog)
-
-	Listens for incomming connection. `backlog` indicates the number of
-	connections the kernel might queue, same as `listen(2)`.
-
-	When a new incoming connection is received, yields, so you can accept() and handle it.
-
-	.. note::
-		Unlike in the libuv, accept() method is implemented on :cpp:class:`uvxx::stream` subclasses.
 
 .. cpp:function:: xx::generated<std::string> uvxx::stream::read(xx::task&)
 

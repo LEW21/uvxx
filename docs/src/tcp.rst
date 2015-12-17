@@ -44,16 +44,15 @@ API
 	not guarantee that the call to :cpp:func:`uvxx::stream::listen` or :cpp:func:`uvxx::tcp::connect`
 	will succeed as well.
 
-.. cpp:function:: uvxx::tcp uvxx::tcp::accept()
+.. cpp:function:: xx::generated<uvxx::tcp> uvxx::tcp::listen(xx::task&, int backlog)
 
-    This call is used in conjunction with :cpp:func:`uvxx::stream::listen` to accept incoming
-    connections. Call this function on each iteration over :cpp:func:`uvxx::stream::listen` generator
-    to accept the connection.
+	Listens for incomming connection. `backlog` indicates the number of
+	connections the kernel might queue, same as `listen(2)`.
 
-    When the :cpp:func:`uvxx::stream::listen` yields it is guaranteed that
-    this function will complete successfully the first time. If you attempt to use
-    it more than once, it may fail. It is suggested to only call this function once
-    per :cpp:func:`uvxx::stream::listen` iteration.
+	Accepts and yields each connection received.
+
+	.. note::
+		It performs both uv_stream_listen and uv_stream_accept.
 
 .. cpp:function:: void uvxx::tcp::connect(xx::task&, const std::string& address, int port)
 
