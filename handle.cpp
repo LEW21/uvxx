@@ -26,8 +26,7 @@ namespace uvxx
 		}};
 		handle->data = &cb;
 
-		auto uv = m_uv.release();
-		uv_close(uv, run_callback<uv_handle_t*>); task.yield();
-		std::free(uv);
+		auto uv = std::unique_ptr<uv_handle_t, decltype(std::free)*>{m_uv.release(), std::free};
+		uv_close(uv.get(), run_callback<uv_handle_t*>); task.yield();
 	}
 }
